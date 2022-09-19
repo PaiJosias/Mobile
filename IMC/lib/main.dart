@@ -21,7 +21,7 @@ class _HomeState extends State<Home>{
   String _textInfo = "";
   
   void _resetCampos(){
-    _formKey.currentState.reset();
+    _formKey.currentState!.reset();
     pesoController.clear();
     alturaController.clear();
     setState(() {
@@ -55,9 +55,8 @@ class _HomeState extends State<Home>{
       }
     });
   }
-}
 
-Widget build (BuildContext context){
+  Widget build (BuildContext context){
 
   return Scaffold(
     appBar: AppBar(
@@ -89,11 +88,11 @@ Widget build (BuildContext context){
               style: TextStyle(color: Colors.green,fontSize: 25.0),
               controller: pesoController,
               validator: (value){
-                if(value.isEmpty){
+                if(value!.isEmpty){
                   return "Insira seu peso!";
                 }
                 else{
-                  return null
+                  return null;
                 }
               }
               
@@ -108,11 +107,11 @@ Widget build (BuildContext context){
               style: TextStyle(color: Colors.green,fontSize: 25.0),
               controller: alturaController,
               validator: (value){
-                if(value.isEmpty){
+                if(value!.isEmpty){
                   return "Insira seu peso!";
                 }
                 else{
-                  return null
+                  return null;
                 }
               }
             ),
@@ -123,7 +122,7 @@ Widget build (BuildContext context){
                     highlightColor: Colors.amber,
                     child: ElevatedButton(
                       onPressed: () {
-                        if (_formKey.currentState.validate()) _calcular();
+                        if (_formKey.currentState!.validate()) _calcular();
                       },
                       child: Text(
                         "Calcular",
@@ -144,3 +143,6 @@ Widget build (BuildContext context){
   );
 
 }
+
+}
+
