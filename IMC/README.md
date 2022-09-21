@@ -1,4 +1,4 @@
-# aula_02
+# IMC
 
 A new Flutter project.
 
