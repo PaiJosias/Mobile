@@ -13,7 +13,7 @@ void main() async{
 }
 
 Future<Map> getData() async{
-  http.Response response = await http.get(request);
+  http.Response response = await http.get(Uri.parse(request));
   return json.decode(response.body);
 }
 
@@ -27,8 +27,8 @@ class _HomeState extends State<Home> {
   final euroController = TextEditingController();
   final realController = TextEditingController();
 
-  double? dolar;
-  double? euro;
+  double ?dolar;
+  double ?euro;
 
   void _realChange(String text){
     if(text.isEmpty){
@@ -66,7 +66,72 @@ class _HomeState extends State<Home> {
     euroController.text = "";
   }
 
-   Widget build(BuildContext context) {
-     return Scaffold();
-   }
+  Widget build(BuildContext context){
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: const Text("\& Conversor de Moedas \&"),
+        centerTitle: true,
+        backgroundColor: Colors.amber,
+      ),
+      body: FutureBuilder<Map>(
+        future: getData(),
+        builder: (context,snapshot){
+          switch(snapshot.connectionState){
+            case ConnectionState.none:
+            case ConnectionState.active:
+            case ConnectionState.waiting:
+              return const Center(
+                child: Text(
+                  "Carregando dados...",
+                  style: TextStyle(color: Colors.amber, fontSize: 25.0),
+                  textAlign: TextAlign.center,
+                ));
+            default:
+              if (snapshot.hasError) {
+                return const Center(
+                  child: Text(
+                  "Erro ao carregar dados...",
+                  style: TextStyle(color: Colors.amber, fontSize: 25.0),
+                  textAlign: TextAlign.center,
+                  ));
+              } 
+              else {
+                dolar = snapshot.data!["results"]["currencies"]["USD"]["buy"];
+                euro = snapshot.data!["results"]["currencies"]["EUR"]["buy"];
+
+                return SingleChildScrollView(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      const Icon(Icons.monetization_on, size: 150.0, color: Colors.amber),
+                      buildTextFormField("Reais", "R\$", realController, _realChange),
+                      const Divider(),
+                      buildTextFormField("Dólar", "US\$", dolarController, _dolarChange),
+                      const Divider(),
+                      buildTextFormField("Euro", "EUR", euroController, _euroChange),
+                    ],
+                  )
+                );
+              }
+        }
+        
+      })
+    );
+  }
+
+  Widget buildTextFormField(String label, String prefix, TextEditingController controller, Function f){
+    return TextField(
+      onChanged: (value) => f(value),
+      controller: controller,
+      decoration:  InputDecoration(
+        labelText: label,
+        labelStyle: const TextStyle(color: Colors.amber),
+        border: const OutlineInputBorder(),
+        prefixText: "$prefix "),
+      style: const TextStyle(color: Colors.amber, fontSize: 25.0),
+      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+    );
+  }
 }
